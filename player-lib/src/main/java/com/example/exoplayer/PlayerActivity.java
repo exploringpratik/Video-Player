@@ -24,6 +24,7 @@ import android.view.View;
 
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.ui.PlayerView;
@@ -63,10 +64,28 @@ public class PlayerActivity extends AppCompatActivity {
     }
 
     private MediaSource buildMediaSource(Uri uri) {
+        //For a single video
+
+//        DataSource.Factory dataSourceFactory =
+//                new DefaultDataSourceFactory(this, "exoplayer-codelab");
+//        return new ProgressiveMediaSource.Factory(dataSourceFactory)
+//                .createMediaSource(uri);
+
+        // These factories are used to construct two media sources below
+
         DataSource.Factory dataSourceFactory =
                 new DefaultDataSourceFactory(this, "exoplayer-codelab");
-        return new ProgressiveMediaSource.Factory(dataSourceFactory)
-                .createMediaSource(uri);
+        ProgressiveMediaSource.Factory mediaSourceFactory =
+                new ProgressiveMediaSource.Factory(dataSourceFactory);
+
+        // Create a media source using the supplied URI
+        MediaSource mediaSource1 = mediaSourceFactory.createMediaSource(uri);
+
+        // Additionally create a media source using an MP3
+        Uri audioUri = Uri.parse(getString(R.string.media_url_mp3));
+        MediaSource mediaSource2 = mediaSourceFactory.createMediaSource(audioUri);
+
+        return new ConcatenatingMediaSource(mediaSource1, mediaSource2);
     }
 
     @Override
@@ -121,4 +140,6 @@ public class PlayerActivity extends AppCompatActivity {
             player = null;
         }
     }
+
+
 }
